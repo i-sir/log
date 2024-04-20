@@ -66,7 +66,7 @@ echo 开始执行; %CD%
 cd /d %~dp0
 git add . 
 git commit -m "提交; %date:~0,4%-%date:~5,2%-%date:~8,2%; %time:~0,8%"
-git push origin master
+git push -f origin master
 
 ::错误提示一下,不会继续执行
 if %errorlevel% neq 0 (  
