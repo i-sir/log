@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 
 ::删除之前的记录
-del /q "D:\phpstudy_pro\WWW\log\git_log\*.*"
+del /q "D:\phpstudy_pro\WWW\git\log\git_log\*.*"
 
 
 
@@ -22,7 +22,7 @@ set "minute=!datetime:~10,2!"
 set "second=!datetime:~12,2!"
 
 REM 指定目标目录
-set "target_dir=D:\phpstudy_pro\WWW\log\git_log"
+set "target_dir=D:\phpstudy_pro\WWW\git\log\git_log\"
 
 REM 构造文件名和内容
 set "filename=%year%%month%%day%_%hour%.txt"
@@ -72,7 +72,7 @@ git push -f origin master
 if %errorlevel% neq 0 (  
     echo 提交失败请查看错误原因
     ::循环执行
-	cd /d D:\phpstudy_pro\WWW\log
+	cd /d D:\phpstudy_pro\WWW\git\log
 	call test.bat
 ) 
 	
@@ -130,7 +130,7 @@ timeout /t %randomNumber% > nul
 
 
 ::循环执行
-cd /d D:\phpstudy_pro\WWW\log
+cd /d D:\phpstudy_pro\WWW\git\log
 call test.bat
 
  
