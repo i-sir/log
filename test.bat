@@ -2,14 +2,12 @@
 setlocal enabledelayedexpansion
 title 执行log提交github任务
 
+:: 设置无限循环标志
+:main_loop
 
-::删除之前的记录
-del /q "D:\phpstudy_pro\WWW\git\log\git_log\*.*"
+:: 删除之前的记录
+del /q "D:\phpstudy_pro\WWW\git\log\git_log\*.*" >nul 2>&1
 
-
-
- 
- 
 REM 获取当前日期和时间
 for /f "delims=" %%a in ('wmic OS Get localdatetime ^| find "."') do set datetime=%%a
 
@@ -31,76 +29,51 @@ set "filecontent=%year%-%month%-%day% %hour%:%minute%:%second%"
 REM 创建文件
 echo %filecontent% > "%target_dir%\%filename%"
 
-
-::换行空白符
-echo ^.
-echo ^..
-echo ^...
-echo ^....
-echo ^.....
-echo ^......
-echo ^.......
-echo ^........
-::展示根目录
+:: 美化输出
+call :print_separator
 echo 文件已创建：%target_dir%\%filename%
-echo ^........
-echo ^......
-echo ^.....
-echo ^....
-echo ^...
-echo ^..
-echo ^.
+call :print_separator
 
+:: 执行Git提交
+cd /d "D:\phpstudy_pro\WWW\git\log"
+echo 开始执行: %CD%
 
-
-
-
-
-::执行Git提交
-
-:: 获取当前脚本的路径  根目录
-cd ..
-echo 开始执行; %CD%
-
-::进入根目录 ,提交代码
-cd /d %~dp0
 git add . 
 git commit -m "提交; %date:~0,4%-%date:~5,2%-%date:~8,2%; %time:~0,8%"
 git push -f origin master
 
-::错误提示一下,不会继续执行
-if %errorlevel% neq 0 (  
+:: 错误处理
+if %errorlevel% neq 0 (
+    call :print_separator
     echo 提交失败请查看错误原因
-    ::循环执行
-	cd /d D:\phpstudy_pro\WWW\git\log
-	call test.bat
+    call :print_separator
+    
+    :: 等待5秒后重试
+    timeout /t 5 >nul
+    goto main_loop
 ) 
-	
-::换行空白符
-echo ^.
-echo ^..
-echo ^...
-echo ^....
-echo ^.....
-echo ^......
-echo ^.......
-echo ^........
-::展示根目录
+
+:: 成功输出
+call :print_separator
 echo 已执行完成 %CD%
-echo ^........
-echo ^......
-echo ^.....
-echo ^....
-echo ^...
-echo ^..
-echo ^.
+call :print_separator
 
+:: 获取3600-3000随机数
+set /a "randomNumber=%random% %% 600 + 3000"
 
+call :print_separator
+echo 下次执行将在 %randomNumber% 秒后
+echo 当前时间: %time%
+call :print_separator
 
-::获取3600-3000随机数
-set /a "range=3600-3000+1"
-set /a "randomNumber=%random% %% range + 3000"
-::换行空白符
+:: 隔随机(3600-3000)秒执行一次
+timeout /t %randomNumber% >nul 
+
+:: 循环执行
+goto main_loop
+
+:: 分隔符子程序
+:print_separator
 echo ^.
 echo ^..
 echo ^...
@@ -109,29 +82,4 @@ echo ^.....
 echo ^......
 echo ^.......
 echo ^........
-::随机数
-echo 随机数为:%randomNumber%
-echo ^........
-echo ^......
-echo ^.....
-echo ^....
-echo ^...
-echo ^..
-echo ^.
-
-
-
-
-::隔随机(3600-3000)秒执行一次
-timeout /t %randomNumber% > nul 
-
-::1秒执行一次
-::timeout /t 1 > nul 
-
-
-::循环执行
-cd /d D:\phpstudy_pro\WWW\git\log
-call test.bat
-
- 
- 
+goto :eof
